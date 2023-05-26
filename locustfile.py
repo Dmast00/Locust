@@ -4,28 +4,30 @@ import jsonBuilder as builder
 
 file_path = 'assets/test.xlsx'
 assigned_variables = ef.assign_excel_columns_to_variables(file_path)
-endpoint_url = "/"
 class Myuser(HttpUser):
-    wait_time = between(5,10)
     @task
     def my_task(self):
+        endpoint_url = "/Classification.svc/V2/List"
         json = {
             "idBrand" : assigned_variables['IdBrand'],
             "idDealer" : assigned_variables['IdDealer'],
-            "idSubBrand" : assigned_variables['IdSubbrand']
+            "idSubBrand" : assigned_variables['IdSubBrand']
         }
-        self.client.get("{endpoint_url}",data=json)
+        self.client.get(endpoint_url,data=json)
 
-def main():
-    file_path = 'assets/test.xlsx'
-    assigned_variables = ef.assign_excel_columns_to_variables(file_path)
-    print(assigned_variables['IdBrand'])
-    print(assigned_variables['IdCategory'])
-    print(assigned_variables['Amount'])
-    print(assigned_variables['IdClassification'])
-    print(assigned_variables['IdDealer'])
-    print(assigned_variables['IdSubBrand'])
-    print(assigned_variables['Year'])
+    @task
+    def ProductInfo(self):
+        endpoint_url = "/ProductInfo.svc/V2/List/"
+        json = {
+            "idBrand" : assigned_variables['IdBrand'],
+            "idSubBrand" : assigned_variables['IdSubBrand'],
+            "idClassification" : assigned_variables['IdClassification'],
+            "idYear" : assigned_variables['Year'],
+            "idVersion" : assigned_variables['IdVersion'],
+            "idDealer" : assigned_variables['IdDealer'],
+        }
+        self.client.get(endpoint_url,data=json)
+
 
 if __name__ == "__main__":
     Myuser()
